@@ -1,0 +1,765 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03AC37DDDD03837AD88E48F6 /* FolderSenseiCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E826180D39E1DA51FC5315 /* FolderSenseiCoreTests.swift */; };
+		1E89D2C122B997A70C5C6C90 /* MonitoredFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B5F239DB72FB3446A083C2 /* MonitoredFolder.swift */; };
+		1EFB4B64FC93A2BF95420B75 /* FolderWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5D1E5E711F78693F67AA5E /* FolderWatcher.swift */; };
+		5575298ACF61F3BF6553959D /* OCREngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6367A332FC084BE78C8B51 /* OCREngine.swift */; };
+		5A003B66359A6DB9B2E6E98E /* FolderSenseiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8586D26533AC4BC771801772 /* FolderSenseiCore.framework */; };
+		5EAE77BB2CABB35E9AA074EE /* FinderSyncExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 72C1F46C7910B79879C1F670 /* FinderSyncExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		60434ED5C892576D0C3106F8 /* FinderSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF18D56B735AE25AC3E9167 /* FinderSync.swift */; };
+		AAAA0001EMBEDFRAMEWORKS001 /* FolderSenseiCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8586D26533AC4BC771801772 /* FolderSenseiCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		679D87521FFA789221906585 /* OrganizingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470A43F52A796EF8750293EC /* OrganizingEngine.swift */; };
+		7942161BFF35F4D2D2426DF6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D0A0A2E9053BEA78168119 /* ContentView.swift */; };
+		A282AD628D30C632F5EABD03 /* AIClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CFFB3F172665849213CF6D /* AIClassifier.swift */; };
+		B6DBF9D8F6E620134A024006 /* FolderSenseiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8586D26533AC4BC771801772 /* FolderSenseiCore.framework */; };
+		BD4AB044FDBB1C8EC694FF1B /* SetupGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964AD7DEFE62CA6E34B9CDB9 /* SetupGuideView.swift */; };
+		C75307E994318B28C7242B77 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAFE7AB0EAB298BE9DACA5B /* SettingsView.swift */; };
+		CF9AA8687F3AE19BF91415D5 /* FileOrganizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BAE6727087DB553A10D2F5E /* FileOrganizer.swift */; };
+		E210E1E587B6CD3267A75010 /* FolderSenseiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DD1C2F8766037398B166F35 /* FolderSenseiApp.swift */; };
+		FC7AB15C96BA7C098BBEDD5D /* FolderSenseiCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8586D26533AC4BC771801772 /* FolderSenseiCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5A6B18FE7803F7F3D7434CF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9A410A2F1E981B3F301B66B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14621C78860EDFEA2C5EC775;
+			remoteInfo = FolderSenseiCore;
+		};
+		BC2B33154A33159DE32F07FD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9A410A2F1E981B3F301B66B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4A542BE59C0CA7471B6165A5;
+			remoteInfo = FinderSyncExtension;
+		};
+		F88B25219F84054054CBDBEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9A410A2F1E981B3F301B66B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14621C78860EDFEA2C5EC775;
+			remoteInfo = FolderSenseiCore;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		30A21F388A5922C4293EC245 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				FC7AB15C96BA7C098BBEDD5D /* FolderSenseiCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB5CA88C084956B24EA4168E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5EAE77BB2CABB35E9AA074EE /* FinderSyncExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAAA0002EMBEDFRAMEWORKS002 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AAAA0001EMBEDFRAMEWORKS001 /* FolderSenseiCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0A5D1E5E711F78693F67AA5E /* FolderWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderWatcher.swift; sourceTree = "<group>"; };
+		11D0A0A2E9053BEA78168119 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3BAFE7AB0EAB298BE9DACA5B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		3E5F29B1DA3E127CA0ADB890 /* FolderSenseiCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FolderSenseiCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		470A43F52A796EF8750293EC /* OrganizingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizingEngine.swift; sourceTree = "<group>"; };
+		72C1F46C7910B79879C1F670 /* FinderSyncExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FinderSyncExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		8586D26533AC4BC771801772 /* FolderSenseiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FolderSenseiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		89E826180D39E1DA51FC5315 /* FolderSenseiCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSenseiCoreTests.swift; sourceTree = "<group>"; };
+		8DD1C2F8766037398B166F35 /* FolderSenseiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSenseiApp.swift; sourceTree = "<group>"; };
+		8EF18D56B735AE25AC3E9167 /* FinderSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderSync.swift; sourceTree = "<group>"; };
+		964AD7DEFE62CA6E34B9CDB9 /* SetupGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupGuideView.swift; sourceTree = "<group>"; };
+		98CFFB3F172665849213CF6D /* AIClassifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIClassifier.swift; sourceTree = "<group>"; };
+		9BAE6727087DB553A10D2F5E /* FileOrganizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileOrganizer.swift; sourceTree = "<group>"; };
+		9D6367A332FC084BE78C8B51 /* OCREngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCREngine.swift; sourceTree = "<group>"; };
+		C02ED3E7A7FDEF44CA469EF3 /* FolderSensei.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FolderSensei.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3B5F239DB72FB3446A083C2 /* MonitoredFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitoredFolder.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DB418648ADFED4BED726FFB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		97E1B64A457B824C5768DE4E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A003B66359A6DB9B2E6E98E /* FolderSenseiCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA1D4703DFC5289685AAB6DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6DBF9D8F6E620134A024006 /* FolderSenseiCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		027D3090B8FC772A0C30E83B /* FolderSenseiApp */ = {
+			isa = PBXGroup;
+			children = (
+				7A1377A12EA0F8A9CC5EA3FF /* FolderSenseiCore */,
+				8DD1C2F8766037398B166F35 /* FolderSenseiApp.swift */,
+				34F39BE2A77F00BB66AA007A /* Models */,
+				5D0EA35F49FFD6EE0BA2AF9E /* Views */,
+			);
+			path = FolderSenseiApp;
+			sourceTree = "<group>";
+		};
+		34F39BE2A77F00BB66AA007A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E3B5F239DB72FB3446A083C2 /* MonitoredFolder.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		5D0EA35F49FFD6EE0BA2AF9E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				11D0A0A2E9053BEA78168119 /* ContentView.swift */,
+				3BAFE7AB0EAB298BE9DACA5B /* SettingsView.swift */,
+				964AD7DEFE62CA6E34B9CDB9 /* SetupGuideView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5EEBE762032A2DEDED6EBA0F /* FolderSenseiCoreTests */ = {
+			isa = PBXGroup;
+			children = (
+				89E826180D39E1DA51FC5315 /* FolderSenseiCoreTests.swift */,
+			);
+			path = FolderSenseiCoreTests;
+			sourceTree = "<group>";
+		};
+		66CAEDBC0A5CB37ED617CA91 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				5EEBE762032A2DEDED6EBA0F /* FolderSenseiCoreTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		7A1377A12EA0F8A9CC5EA3FF /* FolderSenseiCore */ = {
+			isa = PBXGroup;
+			children = (
+				98CFFB3F172665849213CF6D /* AIClassifier.swift */,
+				9BAE6727087DB553A10D2F5E /* FileOrganizer.swift */,
+				0A5D1E5E711F78693F67AA5E /* FolderWatcher.swift */,
+				9D6367A332FC084BE78C8B51 /* OCREngine.swift */,
+				470A43F52A796EF8750293EC /* OrganizingEngine.swift */,
+			);
+			path = FolderSenseiCore;
+			sourceTree = "<group>";
+		};
+		9D7244A43C59F740126C9FEE /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D801937FA144AF60DC100405 /* FinderSyncExtension */,
+				027D3090B8FC772A0C30E83B /* FolderSenseiApp */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		D801937FA144AF60DC100405 /* FinderSyncExtension */ = {
+			isa = PBXGroup;
+			children = (
+				8EF18D56B735AE25AC3E9167 /* FinderSync.swift */,
+			);
+			path = FinderSyncExtension;
+			sourceTree = "<group>";
+		};
+		DAA15CC6B0F22FDF39C73C31 = {
+			isa = PBXGroup;
+			children = (
+				9D7244A43C59F740126C9FEE /* Sources */,
+				66CAEDBC0A5CB37ED617CA91 /* Tests */,
+				EEA1D4BD27AAE0793A408A60 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EEA1D4BD27AAE0793A408A60 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				72C1F46C7910B79879C1F670 /* FinderSyncExtension.appex */,
+				C02ED3E7A7FDEF44CA469EF3 /* FolderSensei.app */,
+				8586D26533AC4BC771801772 /* FolderSenseiCore.framework */,
+				3E5F29B1DA3E127CA0ADB890 /* FolderSenseiCoreTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		14621C78860EDFEA2C5EC775 /* FolderSenseiCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A423B3ED2588308C7106678E /* Build configuration list for PBXNativeTarget "FolderSenseiCore" */;
+			buildPhases = (
+				829D5A43EF32114595054FC5 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FolderSenseiCore;
+			packageProductDependencies = (
+			);
+			productName = FolderSenseiCore;
+			productReference = 8586D26533AC4BC771801772 /* FolderSenseiCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		4A542BE59C0CA7471B6165A5 /* FinderSyncExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6243F43337EB6279D820AC5 /* Build configuration list for PBXNativeTarget "FinderSyncExtension" */;
+			buildPhases = (
+				51D68711ABEC4561FD4224CA /* Sources */,
+				8DB418648ADFED4BED726FFB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FinderSyncExtension;
+			packageProductDependencies = (
+			);
+			productName = FinderSyncExtension;
+			productReference = 72C1F46C7910B79879C1F670 /* FinderSyncExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		79E8ED7DDC31F88D4668EF09 /* FolderSenseiApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 87142E9564AC5D8D4C91798A /* Build configuration list for PBXNativeTarget "FolderSenseiApp" */;
+			buildPhases = (
+				E205AC035EE014B1B5C2B8AB /* Sources */,
+				EA1D4703DFC5289685AAB6DD /* Frameworks */,
+				AAAA0002EMBEDFRAMEWORKS002 /* Embed Frameworks */,
+				AB5CA88C084956B24EA4168E /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6CE5F4630983991B355D4680 /* PBXTargetDependency */,
+				03DBF75FBE372A4CA708E381 /* PBXTargetDependency */,
+			);
+			name = FolderSenseiApp;
+			packageProductDependencies = (
+			);
+			productName = FolderSenseiApp;
+			productReference = C02ED3E7A7FDEF44CA469EF3 /* FolderSensei.app */;
+			productType = "com.apple.product-type.application";
+		};
+		979E3D54A543B7862C9259A1 /* FolderSenseiCoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 175BA910B812A6097799318C /* Build configuration list for PBXNativeTarget "FolderSenseiCoreTests" */;
+			buildPhases = (
+				8F10AD1A3309E3F3E8BBFCC5 /* Sources */,
+				97E1B64A457B824C5768DE4E /* Frameworks */,
+				30A21F388A5922C4293EC245 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0F0527DF91DADCFDD374112C /* PBXTargetDependency */,
+			);
+			name = FolderSenseiCoreTests;
+			packageProductDependencies = (
+			);
+			productName = FolderSenseiCoreTests;
+			productReference = 3E5F29B1DA3E127CA0ADB890 /* FolderSenseiCoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E9A410A2F1E981B3F301B66B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					14621C78860EDFEA2C5EC775 = {
+						ProvisioningStyle = Automatic;
+					};
+					4A542BE59C0CA7471B6165A5 = {
+						ProvisioningStyle = Automatic;
+					};
+					79E8ED7DDC31F88D4668EF09 = {
+						ProvisioningStyle = Automatic;
+					};
+					979E3D54A543B7862C9259A1 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 171A72C9C533ED338684746C /* Build configuration list for PBXProject "FolderSensei" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = DAA15CC6B0F22FDF39C73C31;
+			minimizedProjectReferenceProxies = 1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4A542BE59C0CA7471B6165A5 /* FinderSyncExtension */,
+				79E8ED7DDC31F88D4668EF09 /* FolderSenseiApp */,
+				14621C78860EDFEA2C5EC775 /* FolderSenseiCore */,
+				979E3D54A543B7862C9259A1 /* FolderSenseiCoreTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		51D68711ABEC4561FD4224CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60434ED5C892576D0C3106F8 /* FinderSync.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		829D5A43EF32114595054FC5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A282AD628D30C632F5EABD03 /* AIClassifier.swift in Sources */,
+				CF9AA8687F3AE19BF91415D5 /* FileOrganizer.swift in Sources */,
+				1EFB4B64FC93A2BF95420B75 /* FolderWatcher.swift in Sources */,
+				5575298ACF61F3BF6553959D /* OCREngine.swift in Sources */,
+				679D87521FFA789221906585 /* OrganizingEngine.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F10AD1A3309E3F3E8BBFCC5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03AC37DDDD03837AD88E48F6 /* FolderSenseiCoreTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E205AC035EE014B1B5C2B8AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7942161BFF35F4D2D2426DF6 /* ContentView.swift in Sources */,
+				E210E1E587B6CD3267A75010 /* FolderSenseiApp.swift in Sources */,
+				1E89D2C122B997A70C5C6C90 /* MonitoredFolder.swift in Sources */,
+				C75307E994318B28C7242B77 /* SettingsView.swift in Sources */,
+				BD4AB044FDBB1C8EC694FF1B /* SetupGuideView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		03DBF75FBE372A4CA708E381 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4A542BE59C0CA7471B6165A5 /* FinderSyncExtension */;
+			targetProxy = BC2B33154A33159DE32F07FD /* PBXContainerItemProxy */;
+		};
+		0F0527DF91DADCFDD374112C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14621C78860EDFEA2C5EC775 /* FolderSenseiCore */;
+			targetProxy = F88B25219F84054054CBDBEB /* PBXContainerItemProxy */;
+		};
+		6CE5F4630983991B355D4680 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14621C78860EDFEA2C5EC775 /* FolderSenseiCore */;
+			targetProxy = 5A6B18FE7803F7F3D7434CF7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1446C21278DABCE2AE444DC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SupportingFiles/FinderSyncExtension.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				INFOPLIST_FILE = "SupportingFiles/FinderSyncExtension-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.foldersensei.app.FinderSyncExtension;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2E222F570652339A02EF712A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
+				PRODUCT_BUNDLE_IDENTIFIER = com.foldersensei.core;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		62E17D5F97A10EEF00DC8708 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		6EC0F0BEE9D84E79E69CF0F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SupportingFiles/FolderSenseiApp.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = FolderSensei;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.foldersensei.app;
+				PRODUCT_NAME = FolderSensei;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		7338D53F2428C7F1B6904BE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SupportingFiles/FinderSyncExtension.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				INFOPLIST_FILE = "SupportingFiles/FinderSyncExtension-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.foldersensei.app.FinderSyncExtension;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		754108D0F31F4E30A389C4AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SupportingFiles/FolderSenseiApp.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = FolderSensei;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.foldersensei.app;
+				PRODUCT_NAME = FolderSensei;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		83F59CD27D958177ADA82506 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5RU2SRPU52;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		A8B7EE1F416E12A1BDEFF708 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5RU2SRPU52;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+		F5798A428A2C24EDEEFCBB34 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
+				PRODUCT_BUNDLE_IDENTIFIER = com.foldersensei.core;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		FF8533DD4A68D8F5195D710C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		171A72C9C533ED338684746C /* Build configuration list for PBXProject "FolderSensei" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83F59CD27D958177ADA82506 /* Debug */,
+				A8B7EE1F416E12A1BDEFF708 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		175BA910B812A6097799318C /* Build configuration list for PBXNativeTarget "FolderSenseiCoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF8533DD4A68D8F5195D710C /* Debug */,
+				62E17D5F97A10EEF00DC8708 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		87142E9564AC5D8D4C91798A /* Build configuration list for PBXNativeTarget "FolderSenseiApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6EC0F0BEE9D84E79E69CF0F4 /* Debug */,
+				754108D0F31F4E30A389C4AD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A423B3ED2588308C7106678E /* Build configuration list for PBXNativeTarget "FolderSenseiCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F5798A428A2C24EDEEFCBB34 /* Debug */,
+				2E222F570652339A02EF712A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A6243F43337EB6279D820AC5 /* Build configuration list for PBXNativeTarget "FinderSyncExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1446C21278DABCE2AE444DC1 /* Debug */,
+				7338D53F2428C7F1B6904BE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E9A410A2F1E981B3F301B66B /* Project object */;
+}

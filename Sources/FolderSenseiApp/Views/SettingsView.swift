@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import AppKit
+import FolderSenseiCore
 
 // MARK: - 設定画面
 
@@ -35,7 +36,46 @@ struct SettingsView: View {
                     Label("一般", systemImage: "gear")
                 }
         }
-        .frame(width: 500, height: 400)
+        .frame(width: 520, height: 480)
+    }
+}
+
+// MARK: - AI プロバイダープリセット
+
+enum AIProviderPreset: String, CaseIterable, Identifiable {
+    case openAI = "OpenAI"
+    case groq = "Groq"
+    case togetherAI = "Together AI"
+    case mistral = "Mistral"
+    case custom = "カスタム"
+
+    var id: String { rawValue }
+
+    var baseURL: String {
+        switch self {
+        case .openAI: return "https://api.openai.com"
+        case .groq: return "https://api.groq.com/openai"
+        case .togetherAI: return "https://api.together.xyz"
+        case .mistral: return "https://api.mistral.ai"
+        case .custom: return ""
+        }
+    }
+
+    var recommendedModel: String {
+        switch self {
+        case .openAI: return "gpt-4o-mini"
+        case .groq: return "llama-3.3-70b-versatile"
+        case .togetherAI: return "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+        case .mistral: return "mistral-small-latest"
+        case .custom: return ""
+        }
+    }
+
+    static func detect(baseURL: String) -> AIProviderPreset {
+        for preset in AIProviderPreset.allCases where preset != .custom {
+            if baseURL == preset.baseURL { return preset }
+        }
+        return .custom
     }
 }
 
@@ -44,9 +84,10 @@ struct SettingsView: View {
 struct AISettingsTab: View {
     @Bindable var settings: AISettings
     @State private var connectionStatus: ConnectionStatus = .unknown
+    @State private var selectedPreset: AIProviderPreset = .openAI
 
     enum ConnectionStatus {
-        case unknown, checking, connected, failed
+        case unknown, checking, connected, failed(String)
     }
 
     var body: some View {
@@ -54,7 +95,7 @@ struct AISettingsTab: View {
             Section("AIバックエンド") {
                 Picker("バックエンド", selection: $settings.backendType) {
                     Text("Ollama (ローカル)").tag("ollama")
-                    Text("OpenAI API").tag("openai")
+                    Text("OpenAI互換API").tag("openai")
                 }
                 .pickerStyle(.segmented)
             }
@@ -78,15 +119,27 @@ struct AISettingsTab: View {
                     }
                 }
             } else {
-                Section("OpenAI API 設定") {
+                Section("OpenAI互換API 設定") {
+                    Picker("プロバイダー", selection: $selectedPreset) {
+                        ForEach(AIProviderPreset.allCases) { preset in
+                            Text(preset.rawValue).tag(preset)
+                        }
+                    }
+                    .onChange(of: selectedPreset) { _, newValue in
+                        if newValue != .custom {
+                            settings.openAIBaseURL = newValue.baseURL
+                            settings.openAIModel = newValue.recommendedModel
+                        }
+                    }
+
                     SecureField("API Key", text: $settings.openAIKey)
+                        .textFieldStyle(.roundedBorder)
+
+                    TextField("Base URL", text: $settings.openAIBaseURL)
                         .textFieldStyle(.roundedBorder)
 
                     TextField("モデル名", text: $settings.openAIModel)
                         .textFieldStyle(.roundedBorder)
-                    Text("推奨: gpt-4o-mini (コスト効率), gpt-4o (高精度)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
 
                     HStack {
                         Button("接続テスト") {
@@ -96,15 +149,12 @@ struct AISettingsTab: View {
                     }
                 }
             }
-
-            Section("動作設定") {
-                Text("AIは各ファイルのメタデータとOCR結果を分析し、ユーザーのプロンプトに従ってフォルダに振り分けます。")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
         }
         .formStyle(.grouped)
         .padding()
+        .onAppear {
+            selectedPreset = AIProviderPreset.detect(baseURL: settings.openAIBaseURL)
+        }
     }
 
     @ViewBuilder
@@ -115,18 +165,30 @@ struct AISettingsTab: View {
         case .checking:
             ProgressView()
                 .scaleEffect(0.7)
+            Text("テスト中...")
+                .font(.caption)
+                .foregroundStyle(.secondary)
         case .connected:
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(.green)
-            Text("接続OK")
+            Text("成功")
                 .font(.caption)
                 .foregroundStyle(.green)
-        case .failed:
-            Image(systemName: "xmark.circle.fill")
-                .foregroundStyle(.red)
-            Text("接続失敗")
-                .font(.caption)
-                .foregroundStyle(.red)
+        case .failed(let message):
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.red)
+                    Text("失敗")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                Text(message)
+                    .font(.caption2)
+                    .foregroundStyle(.red)
+                    .textSelection(.enabled)
+                    .lineLimit(3)
+            }
         }
     }
 
@@ -134,17 +196,32 @@ struct AISettingsTab: View {
         connectionStatus = .checking
         Task {
             do {
-                guard let url = URL(string: settings.ollamaBaseURL)?.appendingPathComponent("api/tags") else {
-                    await MainActor.run { connectionStatus = .failed }
+                guard let url = URL(string: settings.ollamaBaseURL)?.appendingPathComponent("api/generate") else {
+                    await MainActor.run { connectionStatus = .failed("URLが無効です") }
                     return
                 }
-                let (_, response) = try await URLSession.shared.data(from: url)
+                var request = URLRequest(url: url)
+                request.httpMethod = "POST"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.timeoutInterval = 30
+                let body: [String: Any] = [
+                    "model": settings.ollamaModel,
+                    "prompt": "Say OK",
+                    "stream": false,
+                    "options": ["num_predict": 8]
+                ]
+                request.httpBody = try JSONSerialization.data(withJSONObject: body)
+                let (data, response) = try await URLSession.shared.data(for: request)
                 let httpResponse = response as? HTTPURLResponse
-                await MainActor.run {
-                    connectionStatus = httpResponse?.statusCode == 200 ? .connected : .failed
+                if httpResponse?.statusCode == 200 {
+                    await MainActor.run { connectionStatus = .connected }
+                } else {
+                    let errorBody = String(data: data, encoding: .utf8) ?? ""
+                    let msg = parseErrorMessage(errorBody, statusCode: httpResponse?.statusCode)
+                    await MainActor.run { connectionStatus = .failed(msg) }
                 }
             } catch {
-                await MainActor.run { connectionStatus = .failed }
+                await MainActor.run { connectionStatus = .failed(error.localizedDescription) }
             }
         }
     }
@@ -153,21 +230,48 @@ struct AISettingsTab: View {
         connectionStatus = .checking
         Task {
             do {
-                guard let url = URL(string: "https://api.openai.com/v1/models") else {
-                    await MainActor.run { connectionStatus = .failed }
+                let baseURLString = settings.openAIBaseURL.isEmpty ? "https://api.openai.com" : settings.openAIBaseURL
+                guard let url = URL(string: baseURLString)?.appendingPathComponent("v1/chat/completions") else {
+                    await MainActor.run { connectionStatus = .failed("URLが無効です") }
                     return
                 }
                 var request = URLRequest(url: url)
+                request.httpMethod = "POST"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.setValue("Bearer \(settings.openAIKey)", forHTTPHeaderField: "Authorization")
-                let (_, response) = try await URLSession.shared.data(for: request)
+                request.timeoutInterval = 15
+                let body: [String: Any] = [
+                    "model": settings.openAIModel,
+                    "messages": [
+                        ["role": "user", "content": "Say OK"]
+                    ],
+                    "max_completion_tokens": 4
+                ]
+                request.httpBody = try JSONSerialization.data(withJSONObject: body)
+                let (data, response) = try await URLSession.shared.data(for: request)
                 let httpResponse = response as? HTTPURLResponse
-                await MainActor.run {
-                    connectionStatus = httpResponse?.statusCode == 200 ? .connected : .failed
+                if httpResponse?.statusCode == 200 {
+                    await MainActor.run { connectionStatus = .connected }
+                } else {
+                    let errorBody = String(data: data, encoding: .utf8) ?? ""
+                    let msg = parseErrorMessage(errorBody, statusCode: httpResponse?.statusCode)
+                    await MainActor.run { connectionStatus = .failed(msg) }
                 }
             } catch {
-                await MainActor.run { connectionStatus = .failed }
+                await MainActor.run { connectionStatus = .failed(error.localizedDescription) }
             }
         }
+    }
+
+    private func parseErrorMessage(_ body: String, statusCode: Int?) -> String {
+        let code = statusCode.map { "HTTP \($0)" } ?? "不明"
+        if let data = body.data(using: .utf8),
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let error = json["error"] as? [String: Any],
+           let message = error["message"] as? String {
+            return "\(code): \(message)"
+        }
+        return "\(code): \(body.prefix(200))"
     }
 }
 
@@ -216,7 +320,7 @@ struct OCRSettingsTab: View {
                                 .textSelection(.enabled)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .frame(maxHeight: 150)
+                        .frame(maxHeight: 120)
                     }
                 }
             }
@@ -284,10 +388,12 @@ struct GeneralSettingsTab: View {
         Form {
             Section("起動") {
                 Toggle("ログイン時に起動", isOn: $launchAtLogin)
+                    .tint(.accentColor)
             }
 
             Section("通知") {
                 Toggle("ファイル整理時に通知を表示", isOn: $showNotifications)
+                    .tint(.accentColor)
             }
 
             Section("動作") {
@@ -304,6 +410,7 @@ struct GeneralSettingsTab: View {
                     .foregroundStyle(.secondary)
 
                 Toggle("サブフォルダを自動作成", isOn: $autoCreateFolders)
+                    .tint(.accentColor)
                 Text("AIが提案したフォルダが存在しない場合に自動作成する")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -313,4 +420,3 @@ struct GeneralSettingsTab: View {
         .padding()
     }
 }
-

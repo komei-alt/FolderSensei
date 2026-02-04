@@ -1,0 +1,100 @@
+name: FolderSensei
+options:
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    CODE_SIGN_STYLE: Automatic
+
+configs:
+  Debug: debug
+  Release: release
+
+targets:
+
+  FolderSenseiCore:
+    type: framework
+    platform: macOS
+    sources:
+      - path: Sources/FolderSenseiCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.foldersensei.core
+        DEFINES_MODULE: true
+        SKIP_INSTALL: true
+        GENERATE_INFOPLIST_FILE: true
+
+  FinderSyncExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Sources/FinderSyncExtension
+    dependencies:
+      - target: FolderSenseiCore
+        embed: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.foldersensei.app.FinderSyncExtension
+        CODE_SIGN_ENTITLEMENTS: SupportingFiles/FinderSyncExtension.entitlements
+        INFOPLIST_FILE: SupportingFiles/FinderSyncExtension-Info.plist
+        SKIP_INSTALL: true
+        LD_RUNPATH_SEARCH_PATHS:
+          - "$(inherited)"
+          - "@executable_path/../Frameworks"
+          - "@executable_path/../../../../Frameworks"
+
+  FolderSenseiApp:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/FolderSenseiApp
+    dependencies:
+      - target: FolderSenseiCore
+        embed: false
+      - target: FinderSyncExtension
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.foldersensei.app
+        PRODUCT_NAME: FolderSensei
+        CODE_SIGN_ENTITLEMENTS: SupportingFiles/FolderSenseiApp.entitlements
+        INFOPLIST_KEY_CFBundleDisplayName: FolderSensei
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        INFOPLIST_KEY_LSUIElement: true
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: true
+        LD_RUNPATH_SEARCH_PATHS:
+          - "$(inherited)"
+          - "@executable_path/../Frameworks"
+
+  FolderSenseiCoreTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/FolderSenseiCoreTests
+    dependencies:
+      - target: FolderSenseiCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: true
+
+schemes:
+  FolderSensei:
+    build:
+      targets:
+        FolderSenseiApp: all
+        FolderSenseiCore: all
+        FinderSyncExtension: all
+        FolderSenseiCoreTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - FolderSenseiCoreTests
+    archive:
+      config: Release

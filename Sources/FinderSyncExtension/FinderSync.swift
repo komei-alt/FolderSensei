@@ -4,6 +4,7 @@ import FinderSync
 // MARK: - Finder Sync Extension
 
 /// Finder上で監視中フォルダにバッジアイコンを表示し、右クリックメニューを提供する
+@objc(FolderSenseiFinder)
 class FolderSenseiFinder: FIFinderSync {
 
     // バッジ識別子
@@ -17,12 +18,16 @@ class FolderSenseiFinder: FIFinderSync {
     // 監視対象フォルダの一覧 (メインアプリからXPC/UserDefaultsで受信)
     private let sharedDefaults = UserDefaults(suiteName: "group.com.foldersensei.shared")
 
+    // バッジ画像のキャッシュ
+    private static var badgeCache: [String: NSImage] = [:]
+    private static let badgeCacheLock = NSLock()
+
     // MARK: - Lifecycle
 
     override init() {
         super.init()
 
-        // バッジ画像を登録
+        // バッジ画像を登録（キャッシュ付き）
         registerBadges()
 
         // 監視対象フォルダを設定
@@ -43,51 +48,65 @@ class FolderSenseiFinder: FIFinderSync {
         let controller = FIFinderSyncController.default()
 
         // 監視中 (緑の目アイコン)
-        let watchingImage = createBadgeImage(
-            symbolName: "eye.circle.fill",
-            color: .systemGreen
+        controller.setBadgeImage(
+            cachedBadgeImage(symbolName: "eye.circle.fill", color: .systemGreen),
+            label: "監視中",
+            forBadgeIdentifier: Badge.watching
         )
-        controller.setBadgeImage(watchingImage, label: "監視中", forBadgeIdentifier: Badge.watching)
 
         // 処理中 (青の歯車アイコン)
-        let processingImage = createBadgeImage(
-            symbolName: "gearshape.circle.fill",
-            color: .systemBlue
+        controller.setBadgeImage(
+            cachedBadgeImage(symbolName: "gearshape.circle.fill", color: .systemBlue),
+            label: "整理中",
+            forBadgeIdentifier: Badge.processing
         )
-        controller.setBadgeImage(processingImage, label: "整理中", forBadgeIdentifier: Badge.processing)
 
         // 一時停止 (黄色のポーズアイコン)
-        let pausedImage = createBadgeImage(
-            symbolName: "pause.circle.fill",
-            color: .systemYellow
+        controller.setBadgeImage(
+            cachedBadgeImage(symbolName: "pause.circle.fill", color: .systemYellow),
+            label: "一時停止",
+            forBadgeIdentifier: Badge.paused
         )
-        controller.setBadgeImage(pausedImage, label: "一時停止", forBadgeIdentifier: Badge.paused)
 
         // エラー (赤の警告アイコン)
-        let errorImage = createBadgeImage(
-            symbolName: "exclamationmark.circle.fill",
-            color: .systemRed
+        controller.setBadgeImage(
+            cachedBadgeImage(symbolName: "exclamationmark.circle.fill", color: .systemRed),
+            label: "エラー",
+            forBadgeIdentifier: Badge.error
         )
-        controller.setBadgeImage(errorImage, label: "エラー", forBadgeIdentifier: Badge.error)
+    }
+
+    /// キャッシュ付きバッジ画像生成
+    private func cachedBadgeImage(symbolName: String, color: NSColor) -> NSImage {
+        let cacheKey = "\(symbolName)_\(color.description)"
+
+        Self.badgeCacheLock.lock()
+        defer { Self.badgeCacheLock.unlock() }
+
+        if let cached = Self.badgeCache[cacheKey] {
+            return cached
+        }
+
+        let image = createBadgeImage(symbolName: symbolName, color: color)
+        Self.badgeCache[cacheKey] = image
+        return image
     }
 
     /// SF Symbols からバッジ用画像を生成
     private func createBadgeImage(symbolName: String, color: NSColor) -> NSImage {
-        let size = NSSize(width: 320, height: 320)
+        let size = NSSize(width: 64, height: 64)  // バッジは小さいサイズで十分
 
         let image = NSImage(size: size, flipped: false) { rect in
-            // SF Symbol を描画
             if let symbolImage = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil) {
-                let config = NSImage.SymbolConfiguration(pointSize: 240, weight: .medium)
+                let config = NSImage.SymbolConfiguration(pointSize: 48, weight: .medium)
                 let configured = symbolImage.withSymbolConfiguration(config) ?? symbolImage
 
-                // 色を設定
                 color.set()
                 let centeredRect = NSRect(
-                    x: (rect.width - 280) / 2,
-                    y: (rect.height - 280) / 2,
-                    width: 280,
-                    height: 280
+                    x: (rect.width - 56) / 2,
+                    y: (rect.height - 56) / 2,
+                    width: 56,
+                    height: 56
                 )
                 configured.draw(in: centeredRect)
             }

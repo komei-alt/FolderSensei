@@ -22,13 +22,25 @@ public final class OrganizingEngine: ObservableObject {
         public var useOCR: Bool
         /// 対象ファイルの拡張子フィルタ (空=全て)
         public var extensionFilter: [String]
+        /// リネーム機能が有効か
+        public var isRenameEnabled: Bool
+        /// リネームモード
+        public var renameMode: RenameMode
+        /// ユーザー指定のリネームルール
+        public var renameRule: String
+        /// 監視する階層の深さ (0=ルートのみ, 1〜=指定階層まで, -1=無制限)
+        public var watchDepth: Int
 
         public init(
             folderURL: URL,
             prompt: String,
             isEnabled: Bool = true,
             useOCR: Bool = true,
-            extensionFilter: [String] = []
+            extensionFilter: [String] = [],
+            isRenameEnabled: Bool = false,
+            renameMode: RenameMode = .aiSuggestion,
+            renameRule: String = "",
+            watchDepth: Int = 0
         ) {
             self.id = UUID()
             self.folderURL = folderURL
@@ -36,6 +48,10 @@ public final class OrganizingEngine: ObservableObject {
             self.isEnabled = isEnabled
             self.useOCR = useOCR
             self.extensionFilter = extensionFilter
+            self.isRenameEnabled = isRenameEnabled
+            self.renameMode = renameMode
+            self.renameRule = renameRule
+            self.watchDepth = watchDepth
         }
     }
 
@@ -56,11 +72,27 @@ public final class OrganizingEngine: ObservableObject {
         public let success: Bool
     }
 
+    /// スキャン進捗
+    public struct ScanProgress: Sendable {
+        public let processed: Int
+        public let total: Int
+        public let currentFile: String?
+
+        public var fraction: Double {
+            total > 0 ? Double(processed) / Double(total) : 0
+        }
+        public var isActive: Bool { total > 0 && processed < total }
+
+        public static let idle = ScanProgress(processed: 0, total: 0, currentFile: nil)
+    }
+
     // MARK: - Published Properties
 
     @Published public private(set) var status: Status = .idle
     @Published public private(set) var logs: [LogEntry] = []
     @Published public var folders: [FolderConfig] = []
+    @Published public private(set) var scanProgress: ScanProgress = .idle
+    @Published public private(set) var operationHistory: [FileOrganizer.Operation] = []
 
     // MARK: - Dependencies
 
@@ -72,17 +104,19 @@ public final class OrganizingEngine: ObservableObject {
 
     // 処理済みファイルのキャッシュ (重複処理防止)
     private var processedFiles: Set<String> = []
-    // 新規ファイル検出後の待機秒数 (書き込み完了を待つ)
-    private let debounceInterval: TimeInterval = 2.0
+    /// 新規ファイル検出後の待機秒数 (書き込み完了を待つ)
+    public nonisolated(unsafe) var debounceInterval: TimeInterval = 2.0
 
     public init(
         ocrEngine: OCREngine = .init(),
         aiClassifier: AIClassifier = .init(),
-        fileOrganizer: FileOrganizer = .init()
+        fileOrganizer: FileOrganizer = .init(),
+        debounceInterval: TimeInterval = 2.0
     ) {
         self.ocrEngine = ocrEngine
         self.aiClassifier = aiClassifier
         self.fileOrganizer = fileOrganizer
+        self.debounceInterval = debounceInterval
     }
 
     // MARK: - Lifecycle
@@ -92,9 +126,7 @@ public final class OrganizingEngine: ObservableObject {
         for config in folders where config.isEnabled {
             startWatching(config)
         }
-        DispatchQueue.main.async {
-            self.status = .watching
-        }
+        status = .watching
     }
 
     /// 全ての監視を停止
@@ -104,9 +136,7 @@ public final class OrganizingEngine: ObservableObject {
         }
         watchers.removeAll()
         processedFiles.removeAll()
-        DispatchQueue.main.async {
-            self.status = .idle
-        }
+        status = .idle
     }
 
     /// 特定フォルダの監視を開始
@@ -143,9 +173,100 @@ public final class OrganizingEngine: ObservableObject {
         folders.removeAll { $0.id == configId }
     }
 
+    /// フォルダ内の既存ファイルをスキャンして順次処理
+    /// watchDepth に応じてサブフォルダも対象にする
+    public func scanExistingFiles(for config: FolderConfig) {
+        let fm = FileManager.default
+        let baseComponentCount = config.folderURL.pathComponents.count
+
+        // watchDepth: 0=ルートのみ, 正数=指定階層, -1=無制限
+        var options: FileManager.DirectoryEnumerationOptions = [.skipsHiddenFiles]
+        if config.watchDepth == 0 {
+            options.insert(.skipsSubdirectoryDescendants)
+        }
+
+        guard let enumerator = fm.enumerator(
+            at: config.folderURL,
+            includingPropertiesForKeys: [.isRegularFileKey, .nameKey],
+            options: options
+        ) else { return }
+
+        var filesToProcess: [URL] = []
+
+        while let url = enumerator.nextObject() as? URL {
+            let name = url.lastPathComponent
+            let fullPath = url.path(percentEncoded: false)
+
+            // ファイルのみ対象
+            guard let values = try? url.resourceValues(forKeys: [.isRegularFileKey]),
+                  values.isRegularFile == true else { continue }
+
+            // 深さチェック (watchDepth > 0 の場合)
+            if config.watchDepth > 0 {
+                let fileComponentCount = url.pathComponents.count
+                let depth = fileComponentCount - baseComponentCount - 1  // ファイル自体は含まない
+                if depth > config.watchDepth {
+                    continue
+                }
+            }
+
+            if name.hasSuffix(".tmp") || name.hasSuffix(".crdownload") { continue }
+
+            if !config.extensionFilter.isEmpty {
+                let ext = url.pathExtension.lowercased()
+                if !config.extensionFilter.contains(ext) { continue }
+            }
+
+            guard !processedFiles.contains(fullPath) else { continue }
+            processedFiles.insert(fullPath)
+            filesToProcess.append(url)
+        }
+
+        guard !filesToProcess.isEmpty else { return }
+
+        let totalCount = filesToProcess.count
+        self.scanProgress = ScanProgress(processed: 0, total: totalCount, currentFile: nil)
+
+        // 1ファイルずつ順次処理
+        Task { [weak self] in
+            for (index, url) in filesToProcess.enumerated() {
+                guard let self, !self.watchers.isEmpty else { break }
+                self.scanProgress = ScanProgress(
+                    processed: index,
+                    total: totalCount,
+                    currentFile: url.lastPathComponent
+                )
+                await self.processFile(url: url, config: config)
+            }
+            self?.scanProgress = .idle
+        }
+    }
+
+    /// 全フォルダの既存ファイルをスキャン
+    public func scanAllExistingFiles() {
+        for config in folders where config.isEnabled {
+            scanExistingFiles(for: config)
+        }
+    }
+
     /// 直前の操作をUndoする
+    @discardableResult
     public func undo() throws -> FileOrganizer.Operation? {
-        try fileOrganizer.undo()
+        let op = try fileOrganizer.undo()
+        if op != nil {
+            syncOperationHistory()
+        }
+        return op
+    }
+
+    /// 操作履歴を FileOrganizer から同期
+    private func syncOperationHistory() {
+        operationHistory = fileOrganizer.history.reversed()
+    }
+
+    /// Undo 可能かどうか
+    public var canUndo: Bool {
+        !fileOrganizer.history.isEmpty
     }
 
     // MARK: - Event Handling
@@ -170,6 +291,16 @@ public final class OrganizingEngine: ObservableObject {
         // 隠しファイル・一時ファイルをスキップ
         let fileName = url.lastPathComponent
         if fileName.hasPrefix(".") || fileName.hasSuffix(".tmp") || fileName.hasSuffix(".crdownload") {
+            return
+        }
+
+        // 深さチェック
+        let baseComponentCount = config.folderURL.pathComponents.count
+        let fileComponentCount = url.pathComponents.count
+        let depth = fileComponentCount - baseComponentCount - 1  // ファイル自体は含まない
+
+        if config.watchDepth >= 0 && depth > config.watchDepth {
+            // 指定深さを超えている場合はスキップ
             return
         }
 
@@ -209,9 +340,7 @@ public final class OrganizingEngine: ObservableObject {
         // ファイルがまだ存在するか確認
         guard FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else { return }
 
-        await MainActor.run {
-            self.status = .processing(fileName: fileName)
-        }
+        self.status = .processing(fileName: fileName)
 
         do {
             // 1. ファイル情報を収集
@@ -248,9 +377,17 @@ public final class OrganizingEngine: ObservableObject {
                 existingFolders: existingFolders
             )
 
+            // リネーム設定を構築
+            let renameConfig = AIClassifier.RenameConfig(
+                isEnabled: config.isRenameEnabled,
+                mode: config.renameMode,
+                rule: config.renameRule
+            )
+
             let classification = try await aiClassifier.classify(
                 file: context,
-                userPrompt: config.prompt
+                userPrompt: config.prompt,
+                renameConfig: renameConfig
             )
 
             // 5. ファイルを移動
@@ -259,53 +396,69 @@ public final class OrganizingEngine: ObservableObject {
                 classification: classification,
                 baseDirectory: config.folderURL
             )
+            syncOperationHistory()
 
             // 6. ログ記録
+            let renameInfo: String
+            if let suggestedName = classification.suggestedName, !suggestedName.isEmpty {
+                renameInfo = " [\(suggestedName)]"
+            } else {
+                renameInfo = ""
+            }
+
             let logEntry = LogEntry(
                 timestamp: Date(),
                 fileName: fileName,
-                action: "→ \(classification.folder) (\(classification.reason))",
+                action: "→ \(classification.folder)\(renameInfo) (\(classification.reason))",
                 success: true
             )
-            await MainActor.run {
-                self.logs.insert(logEntry, at: 0)
-                self.status = .watching
-            }
+            self.logs.insert(logEntry, at: 0)
+            self.status = .watching
 
             // 7. 通知
+            let notifBody: String
+            if let suggestedName = classification.suggestedName, !suggestedName.isEmpty {
+                notifBody = "\(fileName) → \(classification.folder)/\(suggestedName)"
+            } else {
+                notifBody = "\(fileName) → \(classification.folder)"
+            }
             await sendNotification(
                 title: "ファイルを整理しました",
-                body: "\(fileName) → \(classification.folder)"
+                body: notifBody
             )
 
         } catch {
+            print("[OrganizingEngine] \(fileName) 処理エラー: \(error)")
             let logEntry = LogEntry(
                 timestamp: Date(),
                 fileName: fileName,
                 action: "エラー: \(error.localizedDescription)",
                 success: false
             )
-            await MainActor.run {
-                self.logs.insert(logEntry, at: 0)
-                self.status = .error(error.localizedDescription)
-            }
+            self.logs.insert(logEntry, at: 0)
+            self.status = .error(error.localizedDescription)
         }
     }
 
     // MARK: - 通知
 
     private func sendNotification(title: String, body: String) async {
+        guard Bundle.main.bundleIdentifier != nil else {
+            print("[OrganizingEngine] バンドル未設定のため通知をスキップ")
+            return
+        }
+
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = .default
-        
+
         let request = UNNotificationRequest(
             identifier: UUID().uuidString,
             content: content,
             trigger: nil
         )
-        
+
         do {
             try await UNUserNotificationCenter.current().add(request)
         } catch {

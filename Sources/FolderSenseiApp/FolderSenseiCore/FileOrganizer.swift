@@ -57,9 +57,10 @@ public final class FileOrganizer {
         // ファイル名の決定 (suggestedName があればリネーム)
         let fileName: String
         if let suggested = classification.suggestedName, !suggested.isEmpty {
+            let sanitized = sanitizeFileName(suggested)
             // 拡張子を保持
             let ext = fileURL.pathExtension
-            fileName = suggested.hasSuffix(".\(ext)") ? suggested : "\(suggested).\(ext)"
+            fileName = sanitized.hasSuffix(".\(ext)") ? sanitized : "\(sanitized).\(ext)"
         } else {
             fileName = fileURL.lastPathComponent
         }
@@ -135,5 +136,27 @@ public final class FileOrganizer {
         }
 
         return url
+    }
+
+    /// ファイル名に使えない文字を除去・置換
+    private func sanitizeFileName(_ name: String) -> String {
+        var sanitized = name
+        // macOS で禁止される文字: / と :
+        sanitized = sanitized.replacingOccurrences(of: "/", with: "_")
+        sanitized = sanitized.replacingOccurrences(of: ":", with: "_")
+        // 制御文字を除去
+        sanitized = sanitized.unicodeScalars
+            .filter { !CharacterSet.controlCharacters.contains($0) }
+            .map { String($0) }
+            .joined()
+        // 先頭のドット (隠しファイル化防止)
+        while sanitized.hasPrefix(".") {
+            sanitized = String(sanitized.dropFirst())
+        }
+        // 空になった場合のフォールバック
+        if sanitized.trimmingCharacters(in: .whitespaces).isEmpty {
+            sanitized = "renamed_file"
+        }
+        return sanitized
     }
 }

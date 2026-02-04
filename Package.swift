@@ -17,5 +17,10 @@ let package = Package(
             name: "FolderSenseiCore",
             path: "Sources/FolderSenseiCore"
         ),
+        .testTarget(
+            name: "FolderSenseiCoreTests",
+            dependencies: ["FolderSenseiCore"],
+            path: "Tests/FolderSenseiCoreTests"
+        ),
     ]
 )

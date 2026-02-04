@@ -151,48 +151,50 @@ public final class OCREngine {
     // MARK: - Vision OCR 実行
 
     private func performOCR(on image: CGImage) async throws -> Result {
-        try await withCheckedThrowingContinuation { continuation in
-            let request = VNRecognizeTextRequest { request, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-
-                guard let observations = request.results as? [VNRecognizedTextObservation] else {
-                    continuation.resume(returning: Result(text: "", observations: []))
-                    return
-                }
-
-                let minConf = self.configuration.minimumConfidence
-                var texts: [(String, Float)] = []
-
-                for observation in observations {
-                    guard let candidate = observation.topCandidates(1).first else { continue }
-                    let confidence = candidate.confidence
-                    if confidence >= minConf {
-                        texts.append((candidate.string, confidence))
+        let config = self.configuration
+        return try await withCheckedThrowingContinuation { continuation in
+            // Vision の同期処理をバックグラウンドスレッドで実行
+            DispatchQueue.global(qos: .userInitiated).async {
+                let request = VNRecognizeTextRequest { request, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                        return
                     }
+
+                    guard let observations = request.results as? [VNRecognizedTextObservation] else {
+                        continuation.resume(returning: Result(text: "", observations: []))
+                        return
+                    }
+
+                    let minConf = config.minimumConfidence
+                    var texts: [(String, Float)] = []
+
+                    for observation in observations {
+                        guard let candidate = observation.topCandidates(1).first else { continue }
+                        let confidence = candidate.confidence
+                        if confidence >= minConf {
+                            texts.append((candidate.string, confidence))
+                        }
+                    }
+
+                    let fullText = texts.map(\.0).joined(separator: "\n")
+                    continuation.resume(returning: Result(text: fullText, observations: texts))
                 }
 
-                let fullText = texts.map(\.0).joined(separator: "\n")
-                continuation.resume(returning: Result(text: fullText, observations: texts))
-            }
+                request.recognitionLevel = .accurate
+                request.recognitionLanguages = config.languages
+                request.usesLanguageCorrection = true
 
-            // 高精度モード
-            request.recognitionLevel = .accurate
-            request.recognitionLanguages = configuration.languages
-            request.usesLanguageCorrection = true
+                if #available(macOS 14.0, *) {
+                    request.revision = VNRecognizeTextRequestRevision3
+                }
 
-            // 最新リビジョンを使用
-            if #available(macOS 14.0, *) {
-                request.revision = VNRecognizeTextRequestRevision3
-            }
-
-            let handler = VNImageRequestHandler(cgImage: image, options: [:])
-            do {
-                try handler.perform([request])
-            } catch {
-                continuation.resume(throwing: error)
+                let handler = VNImageRequestHandler(cgImage: image, options: [:])
+                do {
+                    try handler.perform([request])
+                } catch {
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }
